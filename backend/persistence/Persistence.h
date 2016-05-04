@@ -152,7 +152,7 @@ class Persistence {
     /**
      * Return the total number of users in the database
      */
-    int32_t countUsers();
+    int32_t countUsers(const std::string& dataset = "");
 
     /**
      * Return the top users with respect to the number of approved/rejected
