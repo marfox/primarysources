@@ -666,10 +666,10 @@ int32_t Persistence::countUsers(const std::string& dataset) {
         sql.begin();
 
     cppdb::result res = (
-            sql << "SELECT COUNT(DISTINCT userlog.user) FROM userlog"
-                   "INNER JOIN statement ON userlog.stmt = statement.id"
+            sql << "SELECT COUNT(DISTINCT userlog.user) FROM userlog "
+                   "INNER JOIN statement ON userlog.stmt = statement.id "
                    "WHERE statement.dataset = ? OR ?"
-                << dataset << (dataset = "")
+                << dataset << (dataset == "")
                 << cppdb::row
     );
 
