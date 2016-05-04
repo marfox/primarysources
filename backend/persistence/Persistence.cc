@@ -659,14 +659,18 @@ int64_t Persistence::countStatements(ApprovalState state, const std::string& dat
 }
 
 
-int32_t Persistence::countUsers() {
+int32_t Persistence::countUsers(const std::string& dataset) {
     int32_t result = 0;
 
     if (!managedTransactions)
         sql.begin();
 
     cppdb::result res = (
-            sql << "SELECT COUNT(DISTINCT user) FROM userlog" << cppdb::row
+            sql << "SELECT COUNT(DISTINCT userlog.user) FROM userlog"
+                   "INNER JOIN statement ON userlog.stmt = statement.id"
+                   "WHERE statement.dataset = ? OR ?"
+                << dataset << (dataset = "")
+                << cppdb::row
     );
 
     if (!res.empty()) {

@@ -151,6 +151,7 @@ void StatusService::Update() {
                 auto st_duplicate = p.countStatements(ApprovalState::DUPLICATE, *it);
                 auto st_blacklisted = p.countStatements(ApprovalState::BLACKLISTED, *it);
                 auto st_wrong = p.countStatements(ApprovalState::WRONG, *it);
+                auto users = p.countUsers(*it);
 
                 {
                     std::lock_guard<std::mutex> lock(status_mutex_);
@@ -166,13 +167,8 @@ void StatusService::Update() {
                     statements->at(*it).set_duplicate(st_duplicate);
                     statements->at(*it).set_blacklisted(st_blacklisted);
                     statements->at(*it).set_wrong(st_wrong);
+                    status_.set_total_users(users);
                 }
-            }
-
-            auto users = p.countUsers();
-            {
-                std::lock_guard<std::mutex> lock(status_mutex_);
-                status_.set_total_users(users);
             }
 
             auto topusers = p.getTopUsers(10);
@@ -229,7 +225,7 @@ model::Status StatusService::Status(const std::string& dataset) {
                 auto st_duplicate = p.countStatements(ApprovalState::DUPLICATE, dataset);
                 auto st_blacklisted = p.countStatements(ApprovalState::BLACKLISTED, dataset);
                 auto st_wrong = p.countStatements(ApprovalState::WRONG, dataset);
-                auto users = p.countUsers();
+                auto users = p.countUsers(dataset);
 
                 {
                     std::lock_guard<std::mutex> lock(status_mutex_);
